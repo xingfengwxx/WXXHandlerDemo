@@ -1,0 +1,3 @@
+include ':libhandler'
+include ':app'
+rootProject.name = "WXXHandlerDemo"
