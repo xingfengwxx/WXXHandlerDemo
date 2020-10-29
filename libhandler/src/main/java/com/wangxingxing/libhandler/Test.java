@@ -1,5 +1,7 @@
 package com.wangxingxing.libhandler;
 
+import java.util.UUID;
+
 public class Test {
 
     public static void main(String[] args) {
@@ -11,18 +13,26 @@ public class Test {
             @Override
             public void handlerMessage(Message msg) {
                 //接收到消息
+                System.out.println(Thread.currentThread().getName() + ", received: " + msg.toString());
             }
         };
 
-        new Thread() {
-            @Override
-            public void run() {
-                Message msg = new Message();
-                msg.what = 1;
-                msg.obj = "abc";
-                handler.sendMessage(msg);
-            }
-        }.start();
+        //子线程
+        for (int i = 0; i < 10; i++) {
+            //多个子线程发消息
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    for (int i = 0; i < 100; i++) {
+                        Message msg = new Message();
+                        msg.what = i;
+                        msg.obj = Thread.currentThread().getName() + ",send message:"+ UUID.randomUUID().toString();
+                        System.out.println("send:"+msg);
+                        handler.sendMessage(msg);
+                    }
+                }
+            }).start();
+        }
 
         Looper.loop();
     }
